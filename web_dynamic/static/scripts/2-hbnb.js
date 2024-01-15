@@ -1,4 +1,14 @@
 $(document).ready(function () {
+
+  $.getJSON("http://0.0.0.0:5001/api/v1/status/", function (response) {
+    if (response.status === "OK") {
+      console.log("OKKKKK");
+      $("div#api_status").addClass("available");
+    } else {
+      $("div#api_status").removeClass("available");
+    }
+  });
+
   /* filtering amenities */
   let amenitiesChecked = [];
 
@@ -6,8 +16,8 @@ $(document).ready(function () {
     amenitiesChecked = amenitiesChecked.filter((item) => item !== '');
     if (amenitiesChecked.length > 1) {
       let amenities = amenitiesChecked.join(', ');
-      if (amenities.length > 38) {
-        amenities = amenities.slice(0, 37) + '...';
+      if (amenities.length > 40) {
+        amenities = amenities.slice(0, 39) + '...';
       }
       $('.amenitiesChecked').text(amenities);
     } else if (amenitiesChecked.length === 1) {
