@@ -1,7 +1,15 @@
-$(document).ready(function () {
-  /* Show API status */
+$(document).ready(() => {
+   /* Filtered Search */
+  let amenitiesChecked = [];
+  const amenitiesIds = [];
+  let statesChecked = [];
+  const statesIds = [];
+  let citiesChecked = [];
+  const citiesIds = [];
+  
+  /* API status */
 
-  $.getJSON('http://54.235.193.23:5001/api/v1/status/', function (data) {
+  $.getJSON('http://54.235.193.23:5001/api/v1/status/', (data) => {
     if (data.status === 'OK') {
       $('#api_status').addClass('available');
     } else {
@@ -9,22 +17,37 @@ $(document).ready(function () {
     }
   });
 
-  /* Filtered Search */
-  let amenitiesChecked = [];
-  const checkedAmenitiesIds = [];
+  $.ajax("http://54.235.193.23:5001/api/v1/places_search", {
+    data: JSON.stringify({}),
+    contentType: "application/json",
+    type: "POST",
+    success: (data) => {
+      for (const place of data) {
+        const template = `<article>
+          <div class="title_box">
+            <h2>${place.name}</h2>
+            <div class="price_by_night">$${place.price_by_night}</div>
+          </div>
+          <div class="information">
+            <div class="max_guest">${place.max_guest} Guests</div>
+                  <div class="number_rooms">${place.number_rooms} Bedrooms</div>
+                  <div class="number_bathrooms">${place.number_bathrooms} Bathrooms</div>
+          </div>
+          <div class="description">
+            ${place.description}
+          </div>
+        </article>`;
+        $("section.places").append(template);
+      }
+    },
+  });
 
-  let checkedStates = [];
-  const checkedStatesIds = [];
-
-  let checkedCities = [];
-  const checkedCitiesIds = [];
-
-  $('#btn_search').on('click', function () {
+  $('#btn_search').on('click', () => {
     $.ajax('http://54.235.193.23:5001/api/v1/places_search', {
       data: JSON.stringify({
-        amenities: checkedAmenitiesIds,
-        states: checkedStatesIds,
-        cities: checkedCitiesIds
+        amenities: amenitiesIds,
+        states: statesIds,
+        cities: citiesIds
       }),
       contentType: 'application/json',
       type: 'POST',
@@ -50,10 +73,7 @@ $(document).ready(function () {
     });
   });
 
-  /* Make amenities filter dynamic */
-
-  function fillHeader (header, checked) {
-    console.log(checked);
+  function filterHeader (header, checked) {
     checked = checked.filter((item) => item !== '');
     if (checked.length > 1) {
       let string = checked.join(', ');
@@ -70,49 +90,49 @@ $(document).ready(function () {
     }
   }
 
-  $('.amenity-checkbox').on('change', function () {
+  $('.amenity-checkbox').on('change', () => {
     const amenityName = $(this).attr('data-name');
     const amenityId = $(this).attr('data-id');
 
     if ($(this).prop('checked')) {
-      checkedAmenitiesIds.push(amenityId);
+      amenitiesIds.push(amenityId);
       amenitiesChecked.push(amenityName);
-      fillHeader($('#h_amn'), amenitiesChecked);
+      filterHeader($('#h_amn'), amenitiesChecked);
     } else {
-      checkedAmenitiesIds.splice(checkedAmenitiesIds.indexOf(amenityId), 1);
+      amenitiesIds.splice(amenitiesIds.indexOf(amenityId), 1);
       amenitiesChecked.splice(amenitiesChecked.indexOf(amenityName), 1);
-      fillHeader($('#h_amn'), amenitiesChecked);
+      filterHeader($('#h_amn'), amenitiesChecked);
     }
   });
 
-  $('.state-checkbox').on('change', function () {
+  $('.state-checkbox').on('change', () => {
     const stateName = $(this).attr('data-name');
     const stateId = $(this).attr('data-id');
 
     console.log(stateName, stateId);
     if ($(this).prop('checked')) {
-      checkedStatesIds.push(stateId);
-      checkedStates.push(stateName);
-      fillHeader($('#h_st_ct'), checkedStates.concat(checkedCities));
+      statesIds.push(stateId);
+      statesChecked.push(stateName);
+      filterHeader($('#h_st_ct'), statesChecked.concat(citiesChecked));
     } else {
-      checkedStatesIds.splice(checkedStatesIds.indexOf(stateId), 1);
-      checkedStates.splice(checkedStates.indexOf(stateName), 1);
-      fillHeader($('#h_st_ct'), checkedStates.concat(checkedCities));
+      statesIds.splice(statesIds.indexOf(stateId), 1);
+      statesChecked.splice(statesChecked.indexOf(stateName), 1);
+      filterHeader($('#h_st_ct'), statesChecked.concat(citiesChecked));
     }
   });
 
-  $('.city-checkbox').on('change', function () {
+  $('.city-checkbox').on('change', () => {
     const cityName = $(this).attr('data-name');
     const cityId = $(this).attr('data-id');
 
     if ($(this).prop('checked')) {
-      checkedCitiesIds.push(cityId);
-      checkedCities.push(cityName);
-      fillHeader($('#h_st_ct'), checkedCities.concat(checkedStates));
+      citiesIds.push(cityId);
+      citiesChecked.push(cityName);
+      filterHeader($('#h_st_ct'), citiesChecked.concat(statesChecked));
     } else {
-      checkedCitiesIds.splice(checkedCitiesIds.indexOf(cityId), 1);
-      checkedCities.splice(checkedCities.indexOf(cityName), 1);
-      fillHeader($('#h_st_ct'), checkedCities.concat(checkedStates));
+      citiesIds.splice(citiesIds.indexOf(cityId), 1);
+      citiesChecked.splice(citiesChecked.indexOf(cityName), 1);
+      filterHeader($('#h_st_ct'), citiesChecked.concat(statesChecked));
     }
   });
 });
