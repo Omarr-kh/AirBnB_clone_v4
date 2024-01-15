@@ -8,7 +8,7 @@ $(document).ready(function () {
     }
   });
 
-  $.ajax("http://0.0.0.0:5001/api/v1/places_search", {
+  $.ajax("http://54.235.193.23:5001/api/v1/places_search", {
     data: JSON.stringify({}),
     contentType: "application/json",
     type: "POST",
