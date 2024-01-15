@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-  $.getJSON("http://0.0.0.0:5001/api/v1/status/", function (response) {
+  $.getJSON("http://54.235.193.23:5001/api/v1/status/", function (response) {
     if (response.status === "OK") {
       $("div#api_status").addClass("available");
     } else {
