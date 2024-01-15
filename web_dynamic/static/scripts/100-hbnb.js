@@ -1,11 +1,19 @@
-$(document).ready(function () {
+$(document).ready(() => {
+   /* Filtered Search */
+  let amenitiesChecked = [];
   const amenitiesIds = [];
+  let statesChecked = [];
+  const statesIds = [];
+  let citiesChecked = [];
+  const citiesIds = [];
+  
+  /* API status */
 
-  $.getJSON('http://0.0.0.0:5001/api/v1/status/', function (response) {
-    if (response.status === 'OK') {
-      $('div#api_status').addClass('available');
+  $.getJSON('http://0.0.0.0:5001/api/v1/status/', (data) => {
+    if (data.status === 'OK') {
+      $('#api_status').addClass('available');
     } else {
-      $('div#api_status').removeClass('available');
+      $('#api_status').removeClass('available');
     }
   });
 
@@ -34,73 +42,97 @@ $(document).ready(function () {
     },
   });
 
-  /* filter places by amenities */
-  $('button#search-btn').on('click', () => {
-    $('section.places').html('');
+  $('#btn_search').on('click', () => {
     $.ajax('http://0.0.0.0:5001/api/v1/places_search', {
       data: JSON.stringify({
         amenities: amenitiesIds,
+        states: statesIds,
+        cities: citiesIds
       }),
       contentType: 'application/json',
       type: 'POST',
       success: function (data) {
-        console.log(data.length);
-
-        if (!data) {
-          $('section.places').html('');
-        }
-
         for (const place of data) {
           const template = `<article>
-            <div class='title_box'>
+            <div class="title_box">
               <h2>${place.name}</h2>
-              <div class='price_by_night'>$${place.price_by_night}</div>
+              <div class="price_by_night">$${place.price_by_night}</div>
             </div>
-            <div class='information'>
-              <div class='max_guest'>${place.max_guest} Guests</div>
-                    <div class='number_rooms'>${place.number_rooms} Bedrooms</div>
-                    <div class='number_bathrooms'>${place.number_bathrooms} Bathrooms</div>
+            <div class="information">
+              <div class="max_guest">${place.max_guest} Guests</div>
+                    <div class="number_rooms">${place.number_rooms} Bedrooms</div>
+                    <div class="number_bathrooms">${place.number_bathrooms} Bathrooms</div>
             </div>
-            <div class='description'>
+            <div class="description">
               ${place.description}
             </div>
           </article>`;
           $('section.places').append(template);
         }
-      },
+      }
     });
   });
 
-  /* filtering amenities */
-  let amenitiesChecked = [];
+  function filterHeader (header, checked) {
+    checked = checked.filter((item) => item !== '');
+    if (checked.length > 1) {
+      let string = checked.join(', ');
 
-  function filterAmenities() {
-    amenitiesChecked = amenitiesChecked.filter((item) => item !== '');
-    if (amenitiesChecked.length > 1) {
-      let amenities = amenitiesChecked.join(', ');
-      if (amenities.length > 38) {
-        amenities = amenities.slice(0, 37) + '...';
+      if (string.length > 38) {
+        string = string.slice(0, 37) + '...';
       }
-      $('.amenitiesChecked').text(amenities);
-    } else if (amenitiesChecked.length === 1) {
-      $('.amenitiesChecked').text(amenitiesChecked[0]);
+
+      header.text(string);
+    } else if (checked.length === 1) {
+      header.text(checked[0]);
     } else {
-      $('.amenitiesChecked').text('');
+      header.text('');
     }
   }
 
-  $('.amenity-checkbox').on('change', function () {
+  $('.amenity-checkbox').on('change', () => {
     const amenityName = $(this).attr('data-name');
     const amenityId = $(this).attr('data-id');
 
     if ($(this).prop('checked')) {
       amenitiesIds.push(amenityId);
       amenitiesChecked.push(amenityName);
-      filterAmenities();
+      filterHeader($('#h_amn'), amenitiesChecked);
     } else {
       amenitiesIds.splice(amenitiesIds.indexOf(amenityId), 1);
       amenitiesChecked.splice(amenitiesChecked.indexOf(amenityName), 1);
-      filterAmenities();
+      filterHeader($('#h_amn'), amenitiesChecked);
+    }
+  });
+
+  $('.state-checkbox').on('change', () => {
+    const stateName = $(this).attr('data-name');
+    const stateId = $(this).attr('data-id');
+
+    console.log(stateName, stateId);
+    if ($(this).prop('checked')) {
+      statesIds.push(stateId);
+      statesChecked.push(stateName);
+      filterHeader($('#h_st_ct'), statesChecked.concat(citiesChecked));
+    } else {
+      statesIds.splice(statesIds.indexOf(stateId), 1);
+      statesChecked.splice(statesChecked.indexOf(stateName), 1);
+      filterHeader($('#h_st_ct'), statesChecked.concat(citiesChecked));
+    }
+  });
+
+  $('.city-checkbox').on('change', () => {
+    const cityName = $(this).attr('data-name');
+    const cityId = $(this).attr('data-id');
+
+    if ($(this).prop('checked')) {
+      citiesIds.push(cityId);
+      citiesChecked.push(cityName);
+      filterHeader($('#h_st_ct'), citiesChecked.concat(statesChecked));
+    } else {
+      citiesIds.splice(citiesIds.indexOf(cityId), 1);
+      citiesChecked.splice(citiesChecked.indexOf(cityName), 1);
+      filterHeader($('#h_st_ct'), citiesChecked.concat(statesChecked));
     }
   });
 });
