@@ -1,7 +1,7 @@
 $(document).ready(function () {
   const amenitiesIds = [];
 
-  $.getJSON('http://54.235.193.23:5001/api/v1/status/', function (response) {
+  $.getJSON('http://0.0.0.0:5001/api/v1/status/', function (response) {
     if (response.status === 'OK') {
       $('div#api_status').addClass('available');
     } else {
@@ -9,7 +9,7 @@ $(document).ready(function () {
     }
   });
 
-  $.ajax("http://54.235.193.23:5001/api/v1/places_search", {
+  $.ajax("http://0.0.0.0:5001/api/v1/places_search", {
     data: JSON.stringify({}),
     contentType: "application/json",
     type: "POST",
@@ -37,7 +37,7 @@ $(document).ready(function () {
   /* filter places by amenities */
   $('button#search-btn').on('click', () => {
     $('section.places').html('');
-    $.ajax('http://54.235.193.23:5001/api/v1/places_search', {
+    $.ajax('http://0.0.0.0:5001/api/v1/places_search', {
       data: JSON.stringify({
         amenities: amenitiesIds,
       }),
