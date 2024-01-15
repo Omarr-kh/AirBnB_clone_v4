@@ -9,7 +9,7 @@ $(document).ready(() => {
   
   /* API status */
 
-  $.getJSON('http://0.0.0.0:5001/api/v1/status/', (data) => {
+  $.getJSON('http://54.235.193.23:5001/api/v1/status/', (data) => {
     if (data.status === 'OK') {
       $('#api_status').addClass('available');
     } else {
@@ -17,7 +17,7 @@ $(document).ready(() => {
     }
   });
 
-  $.ajax("http://0.0.0.0:5001/api/v1/places_search", {
+  $.ajax("http://54.235.193.23:5001/api/v1/places_search", {
     data: JSON.stringify({}),
     contentType: "application/json",
     type: "POST",
@@ -43,7 +43,7 @@ $(document).ready(() => {
   });
 
   $('#btn_search').on('click', () => {
-    $.ajax('http://0.0.0.0:5001/api/v1/places_search', {
+    $.ajax('http://54.235.193.23:5001/api/v1/places_search', {
       data: JSON.stringify({
         amenities: amenitiesIds,
         states: statesIds,
