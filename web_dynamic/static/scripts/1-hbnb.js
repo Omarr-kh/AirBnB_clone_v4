@@ -11,15 +11,15 @@ $(document).ready(function () {
       }
       $('.amenitiesChecked').text(amenities);
     } else if (amenitiesChecked.length === 1) {
-      $(".amenitiesChecked").text(amenitiesChecked[0]);
+      $('.amenitiesChecked').text(amenitiesChecked[0]);
     } else {
-      $(".amenitiesChecked").text("");
+      $('.amenitiesChecked').text('');
     }
   }
 
-  $(".amenity-checkbox").on("change", function () {
-    const amenityName = $(this).attr("data-name");
-    if ($(this).prop("checked")) {
+  $('.amenity-checkbox').on('change', function () {
+    const amenityName = $(this).attr('data-name');
+    if ($(this).prop('checked')) {
       amenitiesChecked.push(amenityName);
       filterAmenities();
     } else {
