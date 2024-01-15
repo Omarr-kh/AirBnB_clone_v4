@@ -1,11 +1,10 @@
 $(document).ready(function () {
 
-  $.getJSON("http://0.0.0.0:5001/api/v1/status/", function (response) {
-    if (response.status === "OK") {
-      console.log("OKKKKK");
-      $("div#api_status").addClass("available");
+  $.getJSON('http://0.0.0.0:5001/api/v1/status/', function (response) {
+    if (response.status === 'OK') {
+      $('#api_status').addClass('available');
     } else {
-      $("div#api_status").removeClass("available");
+      $('#api_status').removeClass('available');
     }
   });
 
@@ -21,15 +20,15 @@ $(document).ready(function () {
       }
       $('.amenitiesChecked').text(amenities);
     } else if (amenitiesChecked.length === 1) {
-      $(".amenitiesChecked").text(amenitiesChecked[0]);
+      $('.amenitiesChecked').text(amenitiesChecked[0]);
     } else {
-      $(".amenitiesChecked").text("");
+      $('.amenitiesChecked').text('');
     }
   }
 
-  $(".amenity-checkbox").on("change", function () {
-    const amenityName = $(this).attr("data-name");
-    if ($(this).prop("checked")) {
+  $('.amenity-checkbox').on('change', function () {
+    const amenityName = $(this).attr('data-name');
+    if ($(this).prop('checked')) {
       amenitiesChecked.push(amenityName);
       filterAmenities();
     } else {
